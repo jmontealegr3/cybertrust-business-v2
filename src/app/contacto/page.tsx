@@ -8,6 +8,19 @@ export default function ContactPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSent, setIsSent] = useState(false);
 
+    // Estado para guardar los datos reales del formulario
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        interest: "Ciberseguridad y Ethical Hacking",
+        message: ""
+    });
+
+    // Función para actualizar el estado cuando el usuario escribe
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
     // Submission handler connected to Env Var
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -20,16 +33,17 @@ export default function ContactPage() {
             if (webhookUrl) {
                 const response = await fetch(webhookUrl, {
                     method: "POST",
-                    body: JSON.stringify({ name: "User", email: "email", message: "msg" }), // Simplificado (deberíamos usar el estado real del form)
+                    body: JSON.stringify(formData), // Enviamos los datos reales (formData)
                     headers: { "Content-Type": "application/json" }
                 });
                 if (!response.ok) throw new Error("Error en envío al Webhook");
             } else {
-                console.warn("No Webhook URL configured. Simulating success.");
+                console.warn("No Webhook URL configured. Application would send:", formData);
                 await new Promise(resolve => setTimeout(resolve, 1500));
             }
 
             setIsSent(true);
+            setFormData({ name: "", email: "", interest: "Ciberseguridad y Ethical Hacking", message: "" }); // Reset form
         } catch (error) {
             console.error(error);
             alert("Hubo un error enviando el mensaje. Intenta nuevamente.");
@@ -129,6 +143,9 @@ export default function ContactPage() {
                                     <label className="block text-sm font-medium text-zinc-400 mb-2">Tu Nombre</label>
                                     <input
                                         type="text"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleChange}
                                         required
                                         className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-zinc-600"
                                         placeholder="Ej. Juan Pérez"
@@ -139,6 +156,9 @@ export default function ContactPage() {
                                     <label className="block text-sm font-medium text-zinc-400 mb-2">Correo Corporativo</label>
                                     <input
                                         type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
                                         required
                                         className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-zinc-600"
                                         placeholder="juan@empresa.com"
@@ -147,7 +167,12 @@ export default function ContactPage() {
 
                                 <div>
                                     <label className="block text-sm font-medium text-zinc-400 mb-2">¿Qué te interesa?</label>
-                                    <select className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all">
+                                    <select
+                                        name="interest"
+                                        value={formData.interest}
+                                        onChange={handleChange}
+                                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all"
+                                    >
                                         <option>Ciberseguridad y Ethical Hacking</option>
                                         <option>Automatización de Procesos (IA)</option>
                                         <option>Auditoría de Infraestructura</option>
@@ -158,6 +183,9 @@ export default function ContactPage() {
                                 <div>
                                     <label className="block text-sm font-medium text-zinc-400 mb-2">Mensaje</label>
                                     <textarea
+                                        name="message"
+                                        value={formData.message}
+                                        onChange={handleChange}
                                         rows={4}
                                         required
                                         className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-zinc-600"
