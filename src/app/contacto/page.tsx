@@ -69,7 +69,7 @@ export default function ContactPage() {
                                 </div>
                                 <div>
                                     <h3 className="font-semibold text-lg mb-1">Email</h3>
-                                    <p className="text-zinc-400">contacto@cybertrustbusiness.com</p>
+                                    <p className="text-zinc-400">servicioalcliente@cybertrustbusiness.com</p>
                                     <p className="text-zinc-500 text-sm">Respuesta estimada: &lt; 2 horas</p>
                                 </div>
                             </div>
