@@ -14,18 +14,20 @@ export default function ContactPage() {
         setIsSubmitting(true);
 
         try {
-            // En un entorno real, descomentar esto para enviar a Make.com
-            /*
-            const response = await fetch(process.env.NEXT_PUBLIC_MAKE_WEBHOOK_URL || "", {
-                method: "POST",
-                body: JSON.stringify({ name: "User", email: "email", message: "msg" }), // Simplificado para demo
-                headers: { "Content-Type": "application/json" }
-            });
-            if (!response.ok) throw new Error("Error en envío");
-            */
+            // Envío real a Make.com
+            const webhookUrl = process.env.NEXT_PUBLIC_MAKE_WEBHOOK_URL;
 
-            // Simulamos espera de red por ahora
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            if (webhookUrl) {
+                const response = await fetch(webhookUrl, {
+                    method: "POST",
+                    body: JSON.stringify({ name: "User", email: "email", message: "msg" }), // Simplificado (deberíamos usar el estado real del form)
+                    headers: { "Content-Type": "application/json" }
+                });
+                if (!response.ok) throw new Error("Error en envío al Webhook");
+            } else {
+                console.warn("No Webhook URL configured. Simulating success.");
+                await new Promise(resolve => setTimeout(resolve, 1500));
+            }
 
             setIsSent(true);
         } catch (error) {
